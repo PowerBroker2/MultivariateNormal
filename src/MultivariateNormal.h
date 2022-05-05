@@ -1,5 +1,7 @@
 /*
-* CREDIT: https://github.com/beniz/eigenmvn/
+* CREDITS:
+* https://github.com/beniz/eigenmvn/
+* https://stackoverflow.com/a/41548972/9860973
 */
 
 #pragma once
@@ -82,6 +84,19 @@ namespace Eigen {
         Matrix<Scalar, Dynamic, -1> samples(int nn)
         {
             return (_transform * Matrix<Scalar, Dynamic, -1>::NullaryExpr(_covar.rows(), nn, randN)).colwise() + _mean;
+        }
+        
+        // https://stackoverflow.com/a/41548972/9860973
+        // Evaluate multivariate normal distribution at a given point
+        float eval(const Eigen::VectorXd &x)
+        {
+            // avoid magic numbers in your code. Compilers will be able to compute this at compile time:
+            const float logSqrt2Pi = 0.5*std::log(2*M_PI);
+            typedef Eigen::LLT<Eigen::MatrixXd> Chol;
+            Chol chol(_covar);
+            const Chol::Traits::MatrixL& L = chol.matrixL();
+            float quadform = (L.solve(x - _mean)).squaredNorm();
+            return std::exp(-x.rows()*logSqrt2Pi - 0.5*quadform) / L.determinant();
         }
     }; // end class EigenMultivariateNormal
 } // end namespace Eigen
