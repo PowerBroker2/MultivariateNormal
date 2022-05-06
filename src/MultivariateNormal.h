@@ -88,14 +88,14 @@ namespace Eigen {
         
         // https://stackoverflow.com/a/41548972/9860973
         // Evaluate multivariate normal distribution at a given point
-        float eval(const Eigen::VectorXd &x)
+        double eval(const Eigen::VectorXd &x)
         {
             // avoid magic numbers in your code. Compilers will be able to compute this at compile time:
-            const float logSqrt2Pi = 0.5*std::log(2*M_PI);
+            const double logSqrt2Pi = 0.5*std::log(2*M_PI);
             typedef Eigen::LLT<Eigen::MatrixXd> Chol;
             Chol chol(_covar);
             const Chol::Traits::MatrixL& L = chol.matrixL();
-            float quadform = (L.solve(x - _mean)).squaredNorm();
+            double quadform = (L.solve(x - _mean)).squaredNorm();
             return std::exp(-x.rows()*logSqrt2Pi - 0.5*quadform) / L.determinant();
         }
     }; // end class EigenMultivariateNormal
