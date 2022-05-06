@@ -88,11 +88,11 @@ namespace Eigen {
         
         // https://stackoverflow.com/a/41548972/9860973
         // Evaluate multivariate normal distribution at a given point
-        double eval(const Eigen::VectorXd &x)
+        double eval(const VectorXd &x)
         {
             // avoid magic numbers in your code. Compilers will be able to compute this at compile time:
             const double logSqrt2Pi = 0.5*std::log(2*M_PI);
-            typedef Eigen::LLT<Eigen::MatrixXd> Chol;
+            typedef LLT<MatrixXd> Chol;
             Chol chol(_covar);
             const Chol::Traits::MatrixL& L = chol.matrixL();
             double quadform = (L.solve(x - _mean)).squaredNorm();
